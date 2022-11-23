@@ -4,12 +4,13 @@
 		<TargetFramework>net6.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
-		<Version>0.1.0</Version>
+		<Version>0.1.1</Version>
 		<RootNamespace>Scighost.PixivApi</RootNamespace>
 		<AssemblyName>Scighost.PixivApi</AssemblyName>
 		<Authors>Scighost</Authors>
 		<PackageId>Scighost.PixivApi</PackageId>
-		<Description>注释详尽的 Pixiv Web-Version Api Client</Description>
+		<Description>Pixiv Web Api</Description>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<PackageProjectUrl>https://github.com/Scighost/PixivApi</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/Scighost/PixivApi</RepositoryUrl>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>

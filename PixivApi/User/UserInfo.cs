@@ -4,56 +4,9 @@
 /// <summary>
 /// 用户信息
 /// </summary>
-public class UserInfo
+public class UserInfo : UserProfile
 {
-    /// <summary>
-    /// 用户uid
-    /// </summary>
-    [JsonPropertyName("userId")]
-    [JsonNumberHandling(JsonNumberHandling.AllowReadingFromString | JsonNumberHandling.WriteAsString)]
-    public int UserId { get; set; }
-
-    /// <summary>
-    /// 昵称
-    /// </summary>
-    [JsonPropertyName("name")]
-    public string Name { get; set; }
-
-    /// <summary>
-    /// 头像小图
-    /// </summary>
-    [JsonPropertyName("image")]
-    public string Image { get; set; }
-
-    /// <summary>
-    /// 头像大图
-    /// </summary>
-    [JsonPropertyName("imageBig")]
-    public string ImageBig { get; set; }
-
-    /// <summary>
-    /// 高级会员
-    /// </summary>
-    [JsonPropertyName("premium")]
-    public bool Premium { get; set; }
-
-    /// <summary>
-    /// 已关注
-    /// </summary>
-    [JsonPropertyName("isFollowed")]
-    public bool IsFollowed { get; set; }
-
-    /// <summary>
-    /// 我的好P友
-    /// </summary>
-    [JsonPropertyName("isMypixiv")]
-    public bool IsMypixiv { get; set; }
-
-    /// <summary>
-    /// 已拉黑
-    /// </summary>
-    [JsonPropertyName("isBlocking")]
-    public bool IsBlocking { get; set; }
+   
 
     /// <summary>
     /// 用户个人背景，此值为 null ，api 已不再能获取到背景图
@@ -66,18 +19,6 @@ public class UserInfo
     /// </summary>
     [JsonPropertyName("following")]
     public int FollowingCount { get; set; }
-
-    /// <summary>
-    /// 不懂
-    /// </summary>
-    [JsonPropertyName("followedBack")]
-    public bool FollowedBack { get; set; }
-
-    /// <summary>
-    /// 个人介绍
-    /// </summary>
-    [JsonPropertyName("comment")]
-    public string Comment { get; set; }
 
     /// <summary>
     /// 个人介绍，html格式
@@ -110,15 +51,27 @@ public class UserInfo
 /// </summary>
 public class UserBackground
 {
+    /// <summary>
+    /// 不懂
+    /// </summary>
     [JsonPropertyName("repeat")]
     public object Repeat { get; set; }
 
+    /// <summary>
+    /// 不懂
+    /// </summary>
     [JsonPropertyName("color")]
     public object Color { get; set; }
 
+    /// <summary>
+    /// 图片，可能没有
+    /// </summary>
     [JsonPropertyName("url")]
     public string Url { get; set; }
 
+    /// <summary>
+    /// 不懂
+    /// </summary>
     [JsonPropertyName("isPrivate")]
     public bool IsPrivate { get; set; }
 }

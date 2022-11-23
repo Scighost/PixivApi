@@ -7,7 +7,7 @@ namespace Scighost.PixivApi;
 
 
 /// <summary>
-/// Pixiv Api 的请求类，所有请求均从此发出。
+/// Pixiv Api 的请求类，所有请求均从此发出，返回错误内容时会抛出 <see cref="PixivException"/> 。
 /// <para />
 /// 在构造此类的实例时可以选择使用不同的构造函数，相对应的功能有 HTTP 代理，绕过 SNI 阻断并指定 IP。
 /// <para />
@@ -22,9 +22,6 @@ public class PixivClient
 
 
     private readonly HttpClient _httpClient;
-
-    public HttpClient HttpClient => _httpClient;
-
 
 
     #region Constructor
@@ -149,6 +146,14 @@ public class PixivClient
         }
         return wrapper.Body;
     }
+
+
+    /// <summary>
+    /// 通过内部的 HttpClient 发送请求
+    /// </summary>
+    /// <param name="message"></param>
+    /// <returns></returns>
+    public async Task<HttpResponseMessage> SendAsync(HttpRequestMessage message) => await _httpClient.SendAsync(message);
 
 
     #endregion
@@ -761,6 +766,12 @@ public class PixivClient
     }
 
 
+    /// <summary>
+    /// 收藏的小说数量
+    /// </summary>
+    /// <param name="userId">用户uid</param>
+    /// <param name="isPrivate">不公开</param>
+    /// <returns></returns>
     public async Task<int> GetUserBookmarkNovelCountAsync(int userId, bool isPrivate = false)
     {
         var url = $"/ajax/user/{userId}/novels/bookmarks?tag=&offset=0&limit=1&rest={(isPrivate ? "hide" : "show")}";

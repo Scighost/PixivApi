@@ -178,6 +178,9 @@ public class NovelSeries
     /// </summary>
     public class NovelSeriesCoverUrlsWrapper
     {
+        /// <summary>
+        /// 不同尺寸的封面
+        /// </summary>
         [JsonPropertyName("urls")]
         public NovelCoverUrls Urls { get; set; }
     }

@@ -46,7 +46,10 @@ public class UserTopWorks : IJsonOnDeserialized
     /// </summary>
     public List<NovelProfile> Novels { get; set; }
 
-
+    /// <summary>
+    /// 反序列化时的操作，不要直接调用
+    /// </summary>
+    [Obsolete("反序列化时的操作，不要直接调用")]
     public void OnDeserialized()
     {
         Illusts = _Illusts.Select(x => x.Value).ToList();

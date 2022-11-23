@@ -87,6 +87,9 @@ public class PixivTag
 /// </summary>
 public class TagTranslation
 {
+    /// <summary>
+    /// 标签翻译
+    /// </summary>
     [JsonPropertyName("en")]
     public string Translation { get; set; }
 }

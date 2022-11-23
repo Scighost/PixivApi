@@ -5,12 +5,12 @@ using System.Net.Sockets;
 namespace Scighost.PixivApi;
 
 /// <summary>
-/// 创建用于绕过SNI阻断的 <see cref="HttpClient"/>
+/// 创建用于绕过SNI阻断的 <see cref="HttpClient"/>，只能连接Pixiv的服务器。
 /// </summary>
-internal abstract class PixivSocketsHttpClient
+public abstract class PixivSocketsHttpClient
 {
     /// <summary>
-    /// 创建用于绕过SNI阻断的 <see cref="HttpClient"/>
+    /// 创建用于绕过SNI阻断的 <see cref="HttpClient"/>，只能连接Pixiv的服务器。
     /// </summary>
     /// <param name="ip">指定 pixiv api ip</param>
     /// <returns></returns>

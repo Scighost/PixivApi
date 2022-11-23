@@ -182,7 +182,10 @@ public class NovelInfo : IJsonOnDeserialized
     [JsonPropertyName("marker")]
     public int? Marker { get; set; }
 
-
+    /// <summary>
+    /// 反序列化时的操作，不要直接调用
+    /// </summary>
+    [Obsolete("反序列化时的操作，不要直接调用")]
     public void OnDeserialized()
     {
         Tags = OriginalTag.Tags.Select(x => new Tag(x.Tag, x.Translation?.Translation)).ToList();

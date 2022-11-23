@@ -65,6 +65,10 @@ public class UserAllWorks : IJsonOnDeserialized
     [JsonPropertyName("pickup")]
     public List<JsonNode> Pickup { get; set; }
 
+    /// <summary>
+    /// 反序列化时的操作，不要直接调用
+    /// </summary>
+    [Obsolete("反序列化时的操作，不要直接调用")]
     public void OnDeserialized()
     {
         Illusts = _illusts.Select(x => x.Key).ToList();

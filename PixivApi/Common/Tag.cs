@@ -16,8 +16,16 @@ public class Tag
     /// </summary>
     public string? Translation { get; set; }
 
+    /// <summary>
+    /// 构造简化后的作品标签
+    /// </summary>
     public Tag() { }
 
+    /// <summary>
+    /// 构造简化后的作品标签
+    /// </summary>
+    /// <param name="name">原文</param>
+    /// <param name="translation">翻译m</param>
     public Tag(string name, string? translation)
     {
         Name = name;
