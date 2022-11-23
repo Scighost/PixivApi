@@ -2,6 +2,7 @@
 using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json.Nodes;
+using System.Text.RegularExpressions;
 
 namespace Scighost.PixivApi;
 
@@ -12,6 +13,8 @@ namespace Scighost.PixivApi;
 /// 在构造此类的实例时可以选择使用不同的构造函数，相对应的功能有 HTTP 代理，绕过 SNI 阻断并指定 IP。
 /// <para />
 /// Pixiv 的登录过程使用了 Cloudflare 保护，基本无法绕过，部分需要账号的功能请在浏览器上登录后使用包含 cookie 和 ua 的构造函数。
+/// <para />
+/// 在进行关注、收藏等非 GET 操作时，需要先调用此方法 <see cref="GetTokenAsync"/> 获取 token，返回为 true 代表获取成功，建议构造完成后立即调用。
 /// </summary>
 public class PixivClient
 {
@@ -22,6 +25,14 @@ public class PixivClient
 
 
     private readonly HttpClient _httpClient;
+
+    /// <summary>
+    /// 内部的 HttpClient 实例
+    /// </summary>
+    public HttpClient HttpClient => _httpClient;
+
+
+    private string? token;
 
 
     #region Constructor
@@ -149,11 +160,29 @@ public class PixivClient
 
 
     /// <summary>
-    /// 通过内部的 HttpClient 发送请求
+    /// 在进行关注、收藏等非 GET 操作时，需要先调用此方法获取 token，返回为 true 代表获取成功，建议构造完成后立即调用。
     /// </summary>
-    /// <param name="message"></param>
     /// <returns></returns>
-    public async Task<HttpResponseMessage> SendAsync(HttpRequestMessage message) => await _httpClient.SendAsync(message);
+    public async Task<bool> GetTokenAsync()
+    {
+        if (!string.IsNullOrWhiteSpace(this.token))
+        {
+            return true;
+        }
+        var str = await _httpClient.GetStringAsync("/");
+        token = Regex.Match(str, @"""token"":""([^""]+)""").Groups[1].Value;
+        if (!string.IsNullOrWhiteSpace(token))
+        {
+            _httpClient.DefaultRequestHeaders.Add("x-csrf-token", token);
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+
 
 
     #endregion

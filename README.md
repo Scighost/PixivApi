@@ -38,13 +38,16 @@ using Scighost.PixivApi;
 PixivClient client = new PixivClient(bypassSNI: true);
 
 // 自定义直连 IP，默认使用 Pixivision 的 IP
-_ = new PixivClient(bypassSNI: true, ip: "123.456.789.100");
+client = new PixivClient(bypassSNI: true, ip: "123.456.789.100");
 
 // 设置 HTTP 代理
-_ = new PixivClient(httpProxy: "127.0.0.1:1080");
+client = new PixivClient(httpProxy: "127.0.0.1:1080");
 
 // 使用账号，可与直连或代理结合
-_ = new PixivClient(cookie: "your cookie", userAgent: "your ua");
+client = new PixivClient(cookie: "your cookie", userAgent: "your ua");
+
+// 在进行关注、收藏等非 GET 操作前需要调用此方法获取 token，返回为 true 代表获取成功，建议构造完成后立即调用。
+Debug.Assert(await client.GetTokenAsync());
 ```
 
 ### 插画 & 漫画
