@@ -1,4 +1,5 @@
-﻿using Scighost.PixivApi.Common;
+﻿using HtmlAgilityPack;
+using Scighost.PixivApi.Common;
 using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json.Nodes;
@@ -251,7 +252,90 @@ public class PixivClient
 
 
     #region Illust
+    public async Task<List<IllustRankItem>> GetRankingList(RankType rankType)
+    {
+        var url = $"ranking.php?mode={rankType.ToString().ToLower()}";
+        string raw = await HttpClient.GetStringAsync(url);
+        HtmlDocument document = new();
+        // document.Load(@"C:\Users\An\Desktop\1.html");
+        document.LoadHtml(raw);
+        var list = document.DocumentNode.SelectSingleNode("//div[@class=\"ranking-items-container\"]/div[@class=\"ranking-items adjust\"]");
+        List<IllustRankItem> ls = new();
+        foreach (var item in list.ChildNodes)
+        {
+            if (item.Name != "section") continue;
+            IllustRankItem IllustItem = new()
+            {
+                ID = item.GetAttributeValue("data-id", 0),
+                Author = item.GetAttributeValue("data-user-name", ""),
+                Rank = item.GetAttributeValue("data-rank", 0),
+                Title = item.GetAttributeValue("data-title", ""),
+                Date = item.GetAttributeValue("data-date", ""),
+                RatingCount = item.GetAttributeValue("data-rating-count", 0),
+                ViewCount = item.GetAttributeValue("data-view-count", 0),
+            };
+            ls.Add(IllustItem);
+        }
+        return ls;
+    }
 
+    public async Task<string> DownloadPic(string url, string path = "")
+    {
+        if (string.IsNullOrEmpty(path))
+        {
+            path = AppDomain.CurrentDomain.BaseDirectory;
+        }
+        if (string.IsNullOrEmpty(url))
+        {
+            throw new PixivException("Pic's url is empty.");
+        }
+        // pximg与主站证书不同 无法绕过SNI阻断
+        url = url.Replace("https://i.pximg.net", "http://210.140.92.136");
+        if (Directory.Exists(path) is false)
+        {
+            Directory.CreateDirectory(path);
+        }
+        HttpClient downloadClient = new();
+        downloadClient.DefaultRequestHeaders.Add("Referer", "https://www.pixiv.net/");
+        byte[] buffer = await downloadClient.GetByteArrayAsync(url);
+        if (buffer.Length == 0)
+        {
+            throw new PixivException("Pic's buffer is empty.");
+        }
+        string filename = url.Split('/').Last();
+        File.WriteAllBytes(Path.Combine(path, filename), buffer);
+        return Path.Combine(path, filename);
+    }
+
+    public async Task<string> DownloadPic(IllustInfo info, string path = "", IllustDownloadType type = IllustDownloadType.Original)
+    {
+        if (info == null || info.Urls == null)
+        {
+            throw new PixivException("Url object is null.");
+        }
+        string url = "";
+        switch (type)
+        {
+            case IllustDownloadType.Original:
+                url = info.Urls.Original;
+                break;
+            case IllustDownloadType.Regular:
+                url = info.Urls.Middle;
+                break;
+            case IllustDownloadType.Small:
+                url = info.Urls.Small;
+                break;
+            case IllustDownloadType.Mini:
+                url = info.Urls.Mini;
+                break;
+            case IllustDownloadType.Thumb:
+                url = info.Urls.Thumb;
+                break;
+            default:
+                break;
+        }
+        return await DownloadPic(url, path);
+    }
 
     /// <summary>
     /// 插画详情

@@ -31,7 +31,13 @@ public abstract class PixivSocketsHttpClient
                 await socket.ConnectAsync(host, 443);
                 var stream = new NetworkStream(socket, true);
                 var sslstream = new SslStream(stream, false, (_, _, _, _) => true);
-                await sslstream.AuthenticateAsClientAsync("");
+                // await sslstream.AuthenticateAsClientAsync("");
+                // 使用Http2导致请求无法解析
+                await sslstream.AuthenticateAsClientAsync(new SslClientAuthenticationOptions
+                {
+                    TargetHost = "",
+                    ApplicationProtocols = new List<SslApplicationProtocol>(new SslApplicationProtocol[] { SslApplicationProtocol.Http11 })
+                }, default);
                 return sslstream;
             },
         };

@@ -18,6 +18,7 @@
 		<PackageTags>Pixiv</PackageTags>
 	</PropertyGroup>
 	<ItemGroup>
+		<PackageReference Include="HtmlAgilityPack" Version="1.11.46" />
 		<PackageReference Include="StandardSocketsHttpHandler" Version="2.2.0.4" />
 		<PackageReference Include="System.Net.Http" Version="4.3.4" />
 		<PackageReference Include="System.Net.Http.Json" Version="7.0.0" />

@@ -20,3 +20,12 @@ public enum IllustType
     /// </summary>
     Animation,
 }
+
+public enum IllustDownloadType
+{
+    Original,
+    Regular,
+    Small,
+    Mini,
+    Thumb
+}
