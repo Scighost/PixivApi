@@ -52,7 +52,7 @@ public class PixivClient
         }
         else
         {
-            _httpClient = new HttpClient(new HttpClientHandler { AutomaticDecompression = DecompressionMethods.All });
+            _httpClient = new HttpClient(new HttpClientHandler { AutomaticDecompression = DecompressionMethods.GZip });
             _httpClient.BaseAddress = new Uri(BASE_URI_HTTPS);
         }
         _httpClient.DefaultRequestHeaders.Add("User-Agent", DEFAULT_USER_AGENT);
@@ -66,7 +66,7 @@ public class PixivClient
     /// <param name="httpProxy">HTTP代理</param>
     public PixivClient(string httpProxy)
     {
-        _httpClient = new HttpClient(new HttpClientHandler { AutomaticDecompression = DecompressionMethods.All, Proxy = new WebProxy(httpProxy) });
+        _httpClient = new HttpClient(new HttpClientHandler { AutomaticDecompression = DecompressionMethods.GZip, Proxy = new WebProxy(httpProxy) });
         _httpClient.BaseAddress = new Uri(BASE_URI_HTTPS);
         _httpClient.DefaultRequestHeaders.Add("User-Agent", DEFAULT_USER_AGENT);
         _httpClient.DefaultRequestHeaders.Add("Referer", BASE_URI_HTTPS);
@@ -89,7 +89,7 @@ public class PixivClient
         }
         else
         {
-            _httpClient = new HttpClient(new HttpClientHandler { AutomaticDecompression = DecompressionMethods.All });
+            _httpClient = new HttpClient(new HttpClientHandler { AutomaticDecompression = DecompressionMethods.GZip });
             _httpClient.BaseAddress = new Uri(BASE_URI_HTTPS);
         }
         _httpClient.DefaultRequestHeaders.Add("Cookie", cookie);
@@ -106,8 +106,7 @@ public class PixivClient
     /// <param name="httpProxy">HTTP代理</param>
     public PixivClient(string cookie, string userAgent, string httpProxy)
     {
-
-        _httpClient = new HttpClient(new HttpClientHandler { AutomaticDecompression = DecompressionMethods.All, Proxy = new WebProxy(httpProxy) });
+        _httpClient = new HttpClient(new HttpClientHandler { AutomaticDecompression = DecompressionMethods.GZip, Proxy = new WebProxy(httpProxy) });
         _httpClient.BaseAddress = new Uri(BASE_URI_HTTPS);
         _httpClient.DefaultRequestHeaders.Add("Cookie", cookie);
         _httpClient.DefaultRequestHeaders.Add("User-Agent", userAgent);
@@ -490,7 +489,7 @@ public class PixivClient
         var response = await CommonGetAsync<RecommendIllustWrapper>(initUrl);
         // 竟然有广告
         yield return response.Illusts.Where(x => x.Id != 0);
-        foreach (var ids in response.NextIds.Chunk(batchSize))
+        foreach (var ids in response.NextIds.Take(batchSize))
         {
             var nextUrl = $"/ajax/illust/recommend/illusts?{string.Join("&", ids.Select(x => $"illust_ids[]={x}"))}";
             yield return (await CommonGetAsync<RecommendIllustWrapper>(nextUrl)).Illusts.Where(x => x.Id != 0);
@@ -730,7 +729,7 @@ public class PixivClient
         var response = await CommonGetAsync<RecommendNovelWrapper>(initUrl);
         // 竟然有广告
         yield return response.Novels.Where(x => x.Id != 0);
-        foreach (var ids in response.NextIds.Chunk(batchSize))
+        foreach (var ids in response.NextIds.Take(batchSize))
         {
             var nextUrl = $"/ajax/novel/recommend/novels?{string.Join("&", ids.Select(x => $"novelIds[]={x}"))}";
             yield return (await CommonGetAsync<RecommendNovelWrapper>(nextUrl)).Novels.Where(x => x.Id != 0);

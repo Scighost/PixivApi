@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using System.Net.Security;
 using System.Net.Sockets;
+using System.Security.Cryptography.X509Certificates;
 
 namespace Scighost.PixivApi;
 
@@ -21,29 +22,20 @@ public abstract class PixivSocketsHttpClient
         {
             host = ip;
         }
-        var handler = new SocketsHttpHandler
-        {
-            AutomaticDecompression = DecompressionMethods.All,
+        var handler = new StandardSocketsHttpHandler
+        {            
+            AutomaticDecompression = DecompressionMethods.GZip,
             ConnectCallback = async (info, token) =>
             {
                 var socket = new Socket(SocketType.Stream, ProtocolType.Tcp);
                 await socket.ConnectAsync(host, 443);
                 var stream = new NetworkStream(socket, true);
                 var sslstream = new SslStream(stream, false, (_, _, _, _) => true);
-                await sslstream.AuthenticateAsClientAsync(new SslClientAuthenticationOptions
-                {
-                    TargetHost = "",
-                    ApplicationProtocols = new List<SslApplicationProtocol>(new SslApplicationProtocol[] { SslApplicationProtocol.Http2 })
-                });
+                await sslstream.AuthenticateAsClientAsync("");
                 return sslstream;
             },
         };
-        var client = new HttpClient(handler)
-        {
-            DefaultVersionPolicy = HttpVersionPolicy.RequestVersionOrHigher,
-            DefaultRequestVersion = HttpVersion.Version20,
-        };
+        var client = new HttpClient(handler);
         return client;
     }
-
 }
