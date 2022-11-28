@@ -3,7 +3,7 @@
 
 # Pixiv Api
 
-> 写注释真麻烦
+0.x 版本期间不保证 API 的可用性和稳定性，方法签名随时有可能更改。
 
 ## 现有功能
 
@@ -116,3 +116,10 @@ int count = await client.GetUserBookmarkIllustCountAsync(userId: 123456, isPriva
 // 已收藏插画的所有自定义标签
 UserBookmarkTag _ = await client.GetUserBookmarkIllustTagsAsync(userId: 123456);
 ```
+
+## PR 规范
+
+- 在新分支上提交代码
+- 专注于一个功能或修复
+- 允许编辑
+
