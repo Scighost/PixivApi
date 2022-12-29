@@ -1,6 +1,8 @@
 ﻿using Scighost.PixivApi.Common;
+using Scighost.PixivApi.Search;
 using System.Net;
 using System.Net.Http.Json;
+using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
 
@@ -1033,6 +1035,90 @@ public class PixivClient
 
 
     #endregion
+
+
+
+
+    #region Search
+
+
+
+    /// <summary>
+    /// 搜索推荐
+    /// </summary>
+    /// <returns></returns>
+    private async Task GetSearchSuggestionAsync()
+    {
+        const string url = "/ajax/search/suggestion?mode=all";
+        // todo
+    }
+
+
+    /// <summary>
+    /// 修改喜欢的标签
+    /// </summary>
+    /// <param name="tags">所有标签</param>
+    /// <returns></returns>
+    public async Task ChangeFavorateTags(IEnumerable<string> tags)
+    {
+        const string url = "/ajax/favorite_tags/save";
+        await CommonPostAsync<JsonNode>(url, new { tags });
+    }
+
+
+
+    /// <summary>
+    /// 搜索候选词
+    /// </summary>
+    /// <param name="keyword"></param>
+    /// <returns></returns>
+    public async Task<List<SearchCandidate>> GetSearchCandidatesAsync(string keyword)
+    {
+        var url = $"/rpc/cps.php?keyword={keyword}";
+        var node = await CommonGetAsync<JsonNode>(url);
+        if (node["candidates"] is JsonArray array)
+        {
+            var list = JsonSerializer.Deserialize<List<SearchCandidate>>(array);
+            if (list?.Any() ?? false)
+            {
+                return list;
+            }
+        }
+        return new List<SearchCandidate>();
+    }
+
+
+
+    private async Task SearchAsync(string keyword)
+    {
+        // order: 最新 date_d，最旧 date
+        // mode: all, safe, r18
+        // p: 1,2,3 页数
+        // s_mode: 标签部分一致 s_tag，标签一致 s_all，标题说明文字：s_tc
+        // type: 全部 all，插画动图 illust_and_ugoira，插画 illust，漫画 manga，动图 ugoira
+        // wlt 图宽大于，wgl 图宽小于，hgt，hlt
+        // ratio: 宽高比，横图 0.5，纵图 -0.5，正方形 0
+        // tool: 制图工具
+        // scd，ecd：起止时间  scd=2022-12-22&ecd=2022-12-29
+        var url = $"/ajax/search/artworks/{keyword}?word={keyword}&order=date_d&mode=safe&p=1&s_mode=s_tag&type=all";
+        url = $"/ajax/search/illustrations/{keyword}?word={keyword}&order=date&mode=r18&scd=2022-12-22&p=1&s_mode=s_tc&type=illust_and_ugoira&wlt=3000&hlt=3000&ratio=0.5&tool=SAI";
+        url = $"/ajax/search/manga/a?word=a&order=date_d&mode=all&scd=2022-12-22&ecd=2022-12-29&p=1&s_mode=s_tag&type=manga&ratio=0&lang=zh";
+        url = "/ajax/search/novels/a?word=a&order=date_d&mode=all&scd=2022-12-22&ecd=2022-12-29&p=1&s_mode=s_tag&gs=0&lang=zh";
+
+        // tlt 字数大于，tgt 字数小于
+        // original_only=1 仅原创
+        // work_lang=zh-cn 作品语言
+        url = "/ajax/search/novels/a?word=a&order=date_d&mode=all&scd=2022-12-22&ecd=2022-12-29&p=1&s_mode=s_tag&tlt=5000&tgt=19999&original_only=1&work_lang=zh-cn&gs=0&lang=zh";
+    }
+
+
+
+
+    #endregion
+
+
+
+
 
 
 
