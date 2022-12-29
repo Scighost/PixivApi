@@ -2,25 +2,47 @@
 
 namespace Scighost.PixivApi.Common;
 
-internal class DictionaryJsonConverter<T> : JsonConverter<Dictionary<int, T>>
+
+internal class DictionaryKeyToListJsonConverter<T> : JsonConverter<List<T>> where T : notnull
 {
-    public override Dictionary<int, T>? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    public override List<T>? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
         if (reader.TokenType == JsonTokenType.StartArray)
         {
-            reader.Read();
-            return new Dictionary<int, T>();
+            return JsonSerializer.Deserialize<List<T>>(ref reader, options);
         }
         else
         {
-            return JsonSerializer.Deserialize<Dictionary<int, T>>(ref reader, options);
+            var dic = JsonSerializer.Deserialize<Dictionary<T, object>>(ref reader, options);
+            return dic?.Keys.ToList();
         }
-
     }
 
-    public override void Write(Utf8JsonWriter writer, Dictionary<int, T> value, JsonSerializerOptions options)
+    public override void Write(Utf8JsonWriter writer, List<T> value, JsonSerializerOptions options)
     {
-        throw new NotImplementedException();
+        writer.WriteRawValue(JsonSerializer.Serialize(value, options));
+    }
+}
+
+
+internal class DictionaryValueToListJsonConverter<TKey, TValue> : JsonConverter<List<TValue>> where TKey : notnull
+{
+    public override List<TValue>? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    {
+        if (reader.TokenType == JsonTokenType.StartArray)
+        {
+            return JsonSerializer.Deserialize<List<TValue>>(ref reader, options);
+        }
+        else
+        {
+            var dic = JsonSerializer.Deserialize<Dictionary<TKey, TValue>>(ref reader, options);
+            return dic?.Values.ToList();
+        }
+    }
+
+    public override void Write(Utf8JsonWriter writer, List<TValue> value, JsonSerializerOptions options)
+    {
+        writer.WriteRawValue(JsonSerializer.Serialize(value, options));
     }
 }
 

@@ -5,12 +5,13 @@ namespace Scighost.PixivApi.Novel;
 /// <summary>
 /// 小说详细信息（有正文）
 /// </summary>
-public class NovelInfo : IJsonOnDeserialized
+public class NovelInfo
 {
     /// <summary>
     /// 小说id
     /// </summary>
-    [JsonPropertyName("id"), JsonNumberHandling(JsonNumberHandling.AllowReadingFromString)]
+    [JsonPropertyName("id")]
+    [JsonNumberHandling(JsonNumberHandling.AllowReadingFromString | JsonNumberHandling.WriteAsString)]
     public int Id { get; set; }
 
     /// <summary>
@@ -70,7 +71,8 @@ public class NovelInfo : IJsonOnDeserialized
     /// <summary>
     /// 作者uid
     /// </summary>
-    [JsonPropertyName("userId"), JsonNumberHandling(JsonNumberHandling.AllowReadingFromString)]
+    [JsonPropertyName("userId")]
+    [JsonNumberHandling(JsonNumberHandling.AllowReadingFromString | JsonNumberHandling.WriteAsString)]
     public int UserId { get; set; }
 
     /// <summary>
@@ -110,16 +112,11 @@ public class NovelInfo : IJsonOnDeserialized
     public bool IsLike { get; set; }
 
     /// <summary>
-    /// 原始标签，结构比较复杂，请使用 <see cref="Tags"/> 代替
+    /// 标签
     /// </summary>
-    [JsonInclude, JsonPropertyName("tags")]
-    public PixivTag OriginalTag;
-
-    /// <summary>
-    /// 简单标签
-    /// </summary>
-    [JsonIgnore]
-    public List<Tag> Tags { get; set; }
+    [JsonPropertyName("tags")]
+    [JsonConverter(typeof(PixivTagJsonConverter))]
+    public List<PixivTag> Tags { get; set; }
 
     /// <summary>
     /// 小说阅读界面的侧栏系列数据
@@ -128,16 +125,10 @@ public class NovelInfo : IJsonOnDeserialized
     public SeriesNavData? SeriesNavData { get; set; }
 
     /// <summary>
-    /// 作者的所有小说的id，请使用 <see cref="UserNovels"/> 代替
-    /// </summary>
-    [JsonInclude]
-    [JsonPropertyName("userNovels")]
-    [JsonConverter(typeof(DictionaryJsonConverter<NovelProfile?>))]
-    public Dictionary<int, NovelProfile?> _UserNovels;
-
-    /// <summary>
     /// 作者的所有小说的id
     /// </summary>
+    [JsonPropertyName("userNovels")]
+    [JsonConverter(typeof(DictionaryKeyToListJsonConverter<int>))]
     public List<int> UserNovels { get; set; }
 
     /// <summary>
@@ -182,14 +173,5 @@ public class NovelInfo : IJsonOnDeserialized
     [JsonPropertyName("marker")]
     public int? Marker { get; set; }
 
-    /// <summary>
-    /// 反序列化时的操作，不要直接调用
-    /// </summary>
-    [Obsolete("反序列化时的操作，不要直接调用")]
-    public void OnDeserialized()
-    {
-        Tags = OriginalTag.Tags.Select(x => new Tag(x.Tag, x.Translation?.Translation)).ToList();
-        UserNovels = _UserNovels.Select(x => x.Key).OrderBy(x => x).ToList();
-    }
 }
 

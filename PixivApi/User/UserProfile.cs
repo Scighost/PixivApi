@@ -6,7 +6,7 @@
 public class UserProfile
 {
 
-     /// <summary>
+    /// <summary>
     /// 用户uid
     /// </summary>
     [JsonPropertyName("userId")]
@@ -61,7 +61,7 @@ public class UserProfile
     [JsonPropertyName("comment")]
     public string Comment { get; set; }
 
-     /// <summary>
+    /// <summary>
     /// 不懂
     /// </summary>
     [JsonPropertyName("followedBack")]

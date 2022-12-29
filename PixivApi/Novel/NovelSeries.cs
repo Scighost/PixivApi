@@ -1,4 +1,5 @@
 ﻿using Scighost.PixivApi.Common;
+using System.Text.Json;
 
 namespace Scighost.PixivApi.Novel;
 
@@ -162,26 +163,39 @@ public class NovelSeries
     public bool IsNotifying { get; set; }
 
     /// <summary>
-    /// 封面，使用 <see cref="CoverUrls"/> 代替
-    /// </summary>
-    [JsonInclude, JsonPropertyName("cover")]
-    public NovelSeriesCoverUrlsWrapper _cover;
-
-    /// <summary>
     /// 不同尺寸的封面
     /// </summary>
-    [JsonIgnore]
-    public NovelCoverUrls CoverUrls => _cover.Urls;
+    [JsonPropertyName("cover")]
+    [JsonConverter(typeof(NovelSeriesCoverJsonConverter))]
+    public NovelSeriesCoverUrls CoverUrls { get; set; }
+
+
+}
+
+
+internal class NovelSeriesCoverJsonConverter : JsonConverter<NovelSeriesCoverUrls>
+{
+    public override NovelSeriesCoverUrls? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    {
+        var wrapper = JsonSerializer.Deserialize<NovelSeriesCoverUrlsWrapper>(ref reader, options);
+        return wrapper?.Urls;
+    }
+
+    public override void Write(Utf8JsonWriter writer, NovelSeriesCoverUrls value, JsonSerializerOptions options)
+    {
+        writer.WriteRawValue(JsonSerializer.Serialize(new NovelSeriesCoverUrlsWrapper { Urls = value }, options));
+    }
+
 
     /// <summary>
     /// 封面图片包装
     /// </summary>
-    public class NovelSeriesCoverUrlsWrapper
+    private class NovelSeriesCoverUrlsWrapper
     {
         /// <summary>
         /// 不同尺寸的封面
         /// </summary>
         [JsonPropertyName("urls")]
-        public NovelCoverUrls Urls { get; set; }
+        public NovelSeriesCoverUrls Urls { get; set; }
     }
 }

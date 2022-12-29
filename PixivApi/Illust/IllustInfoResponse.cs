@@ -50,7 +50,7 @@ internal class IllustInfoResponse
     public IllustImageUrls Urls { get; set; }
 
     [JsonPropertyName("tags")]
-    public PixivTag Tags { get; set; }
+    public PixivTagInternal Tags { get; set; }
 
     [JsonPropertyName("alt")]
     public string Alt { get; set; }
@@ -69,7 +69,6 @@ internal class IllustInfoResponse
     public string UserAccount { get; set; }
 
     [JsonPropertyName("userIllusts")]
-    [JsonConverter(typeof(DictionaryJsonConverter<IllustProfile?>))]
     public Dictionary<int, IllustProfile?> UserIllusts { get; set; }
 
     [JsonPropertyName("likeData")]

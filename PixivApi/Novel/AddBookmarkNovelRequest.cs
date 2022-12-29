@@ -12,7 +12,7 @@ public class AddBookmarkNovelRequest
     /// 小说id
     /// </summary>
     [JsonPropertyName("novel_id")]
-    [JsonNumberHandling(JsonNumberHandling.WriteAsString)]
+    [JsonNumberHandling(JsonNumberHandling.AllowReadingFromString | JsonNumberHandling.WriteAsString)]
     public int NovelId { get; set; }
 
     /// <summary>

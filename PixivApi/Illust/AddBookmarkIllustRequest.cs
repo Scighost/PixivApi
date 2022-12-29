@@ -12,7 +12,7 @@ public class AddBookmarkIllustRequest
     /// 插画id
     /// </summary>
     [JsonPropertyName("illust_id")]
-    [JsonNumberHandling(JsonNumberHandling.WriteAsString)]
+    [JsonNumberHandling(JsonNumberHandling.AllowReadingFromString | JsonNumberHandling.WriteAsString)]
     public int IllustId { get; set; }
 
     /// <summary>

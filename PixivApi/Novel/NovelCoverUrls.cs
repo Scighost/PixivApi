@@ -3,7 +3,7 @@
 /// <summary>
 /// 小说封面图片
 /// </summary>
-public class NovelCoverUrls
+public class NovelSeriesCoverUrls
 {
     /// <summary>
     /// 128x128

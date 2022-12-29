@@ -21,7 +21,7 @@ public class PixivClient
 
     private const string BASE_URI_HTTP = "http://www.pixiv.net/";
     private const string BASE_URI_HTTPS = "https://www.pixiv.net/";
-    private const string DEFAULT_USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64)";
+    private const string DEFAULT_USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36 Edg/108.0.1462.54";
 
 
     private readonly HttpClient _httpClient;
@@ -77,10 +77,9 @@ public class PixivClient
     /// 使用账号，绕过 SNI 阻断
     /// </summary>
     /// <param name="cookie">账号cookie</param>
-    /// <param name="userAgent">浏览器ua</param>
     /// <param name="bypassSNI">绕过SNI阻断</param>
     /// <param name="ip">直连ip，若为空则使用Pixivision的IP</param>
-    public PixivClient(string cookie, string userAgent, bool bypassSNI = false, string? ip = null)
+    public PixivClient(string cookie, bool bypassSNI = false, string? ip = null)
     {
         if (bypassSNI)
         {
@@ -93,7 +92,7 @@ public class PixivClient
             _httpClient.BaseAddress = new Uri(BASE_URI_HTTPS);
         }
         _httpClient.DefaultRequestHeaders.Add("Cookie", cookie);
-        _httpClient.DefaultRequestHeaders.Add("User-Agent", userAgent);
+        _httpClient.DefaultRequestHeaders.Add("User-Agent", DEFAULT_USER_AGENT);
         _httpClient.DefaultRequestHeaders.Add("Referer", BASE_URI_HTTPS);
     }
 
@@ -102,15 +101,14 @@ public class PixivClient
     /// 使用账号，设置 HTTP 代理
     /// </summary>
     /// <param name="cookie">账号cookie</param>
-    /// <param name="userAgent">浏览器ua</param>
     /// <param name="httpProxy">HTTP代理</param>
-    public PixivClient(string cookie, string userAgent, string httpProxy)
+    public PixivClient(string cookie, string httpProxy)
     {
 
         _httpClient = new HttpClient(new HttpClientHandler { AutomaticDecompression = DecompressionMethods.All, Proxy = new WebProxy(httpProxy) });
         _httpClient.BaseAddress = new Uri(BASE_URI_HTTPS);
         _httpClient.DefaultRequestHeaders.Add("Cookie", cookie);
-        _httpClient.DefaultRequestHeaders.Add("User-Agent", userAgent);
+        _httpClient.DefaultRequestHeaders.Add("User-Agent", DEFAULT_USER_AGENT);
         _httpClient.DefaultRequestHeaders.Add("Referer", BASE_URI_HTTPS);
     }
 
@@ -293,8 +291,8 @@ public class PixivClient
     /// <summary>
     /// 漫画系列
     /// </summary>
-    /// <param name="seriesId"></param>
-    /// <param name="page"></param>
+    /// <param name="seriesId">漫画系列 id</param>
+    /// <param name="page">页数，倒序，一页12个</param>
     /// <returns></returns>
     public async Task<MangaSeries> GetMangaSeriesAsync(int seriesId, int page)
     {
@@ -303,12 +301,12 @@ public class PixivClient
         var manga = response.MangaSeries.First(x => x.Id == seriesId);
         var dic_illuts = response.Thumbnails.Illusts.ToDictionary(x => x.Id);
         var works = response.Page.Works;
-        var illusts = new List<IllustProfile>(works.Count);
+        var illusts = new List<MangaSeriesIllust>(works.Count);
         foreach (var work in works)
         {
             if (dic_illuts.TryGetValue(work.WorkId, out var illust))
             {
-                illusts.Add(illust);
+                illusts.Add(new MangaSeriesIllust { IllustId = work.WorkId, IllustProfile = illust, Order = work.Order });
             }
         }
         manga.Illusts = illusts;

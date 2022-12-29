@@ -84,7 +84,8 @@ public class SeriesNavDataPreviewOrNextData
     /// <summary>
     /// 作品id
     /// </summary>
-    [JsonPropertyName("id"), JsonNumberHandling(JsonNumberHandling.AllowReadingFromString | JsonNumberHandling.WriteAsString)]
+    [JsonPropertyName("id")]
+    [JsonNumberHandling(JsonNumberHandling.AllowReadingFromString | JsonNumberHandling.WriteAsString)]
     public int Id { get; set; }
 
     /// <summary>

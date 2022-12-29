@@ -6,7 +6,7 @@
 /// </summary>
 public class UserInfo : UserProfile
 {
-   
+
 
     /// <summary>
     /// 用户个人背景，此值为 null ，api 已不再能获取到背景图

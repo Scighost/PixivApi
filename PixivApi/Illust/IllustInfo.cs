@@ -5,7 +5,7 @@ namespace Scighost.PixivApi.Illust;
 /// <summary>
 /// 插画和漫画详细信息，已忽略部分无用字段
 /// </summary>
-public class IllustInfo : IJsonOnDeserialized
+public class IllustInfo
 {
     /// <summary>
     /// 插画漫画id
@@ -57,16 +57,11 @@ public class IllustInfo : IJsonOnDeserialized
     public IllustImageUrls Urls { get; set; }
 
     /// <summary>
-    /// 作品的原始标签数据，这个类有些复杂，请使用简单标签 <see cref="Tags"/> 代替.
+    /// 作品标签
     /// </summary>
-    [JsonInclude, JsonPropertyName("tags")]
-    public PixivTag OriginalTag;
-
-    /// <summary>
-    /// 作品的简单标签
-    /// </summary>
-    [JsonIgnore]
-    public List<Tag> Tags { get; set; }
+    [JsonPropertyName("tags")]
+    [JsonConverter(typeof(PixivTagJsonConverter))]
+    public List<PixivTag> Tags { get; set; }
 
     /// <summary>
     /// 作者uid
@@ -88,17 +83,10 @@ public class IllustInfo : IJsonOnDeserialized
     public string UserAccount { get; set; }
 
     /// <summary>
-    /// 作者的所有插画的id，请使用 <see cref="UserIllusts"/> 代替
-    /// </summary>
-    [JsonInclude]
-    [JsonPropertyName("userIllusts")]
-    [JsonConverter(typeof(DictionaryJsonConverter<IllustProfile?>))]
-    public Dictionary<int, IllustProfile?> _UserIllusts;
-
-    /// <summary>
     /// 作者的所有插画的id
     /// </summary>
-    [JsonIgnore]
+    [JsonPropertyName("userIllusts")]
+    [JsonConverter(typeof(DictionaryKeyToListJsonConverter<int>))]
     public List<int> UserIllusts { get; set; }
 
     /// <summary>
@@ -173,13 +161,4 @@ public class IllustInfo : IJsonOnDeserialized
     [JsonPropertyName("bookmarkData")]
     public BookmarkData? BookmarkData { get; set; }
 
-    /// <summary>
-    /// 反序列化时的操作，不要直接调用
-    /// </summary>
-    [Obsolete("反序列化时的操作，不要直接调用")]
-    public void OnDeserialized()
-    {
-        Tags = OriginalTag.Tags.Select(x => new Tag(x.Tag, x.Translation?.Translation)).ToList();
-        UserIllusts = _UserIllusts.Select(x => x.Key).OrderBy(x => x).ToList();
-    }
 }

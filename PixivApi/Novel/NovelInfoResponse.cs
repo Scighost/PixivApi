@@ -90,7 +90,7 @@ internal class NovelInfoResponse
     public int? Marker { get; set; }
 
     [JsonPropertyName("tags")]
-    public PixivTag Tags { get; set; }
+    public PixivTagInternal Tags { get; set; }
 
     [JsonPropertyName("seriesNavData")]
     public SeriesNavData SeriesNavData { get; set; }
@@ -126,7 +126,6 @@ internal class NovelInfoResponse
     public int ImageResponseCount { get; set; }
 
     [JsonPropertyName("userNovels")]
-    [JsonConverter(typeof(DictionaryJsonConverter<NovelProfile?>))]
     public Dictionary<int, NovelProfile?> UserNovels { get; set; }
 
     [JsonPropertyName("hasGlossary")]

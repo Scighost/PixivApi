@@ -54,14 +54,16 @@ public class MangaSeries
     /// 第一章的插画id
     /// </summary>
     [JsonPropertyName("firstIllustId")]
-    public string FirstIllustId { get; set; }
+    [JsonNumberHandling(JsonNumberHandling.AllowReadingFromString | JsonNumberHandling.WriteAsString)]
+    public int FirstIllustId { get; set; }
 
 
     /// <summary>
     /// 最后一章的插画id
     /// </summary>
     [JsonPropertyName("latestIllustId")]
-    public string LatestIllustId { get; set; }
+    [JsonNumberHandling(JsonNumberHandling.AllowReadingFromString | JsonNumberHandling.WriteAsString)]
+    public int LatestIllustId { get; set; }
 
     /// <summary>
     /// 创建时间
@@ -90,7 +92,28 @@ public class MangaSeries
     /// <summary>
     /// 漫画系列的内容
     /// </summary>
-    [JsonIgnore]
-    public List<IllustProfile> Illusts { get; set; }
+    public List<MangaSeriesIllust> Illusts { get; set; }
 
+}
+
+
+/// <summary>
+/// 漫画系列的内容
+/// </summary>
+public class MangaSeriesIllust
+{
+    /// <summary>
+    /// 漫画 id
+    /// </summary>
+    public int IllustId { get; set; }
+
+    /// <summary>
+    /// 在系列中的排序
+    /// </summary>
+    public int Order { get; set; }
+
+    /// <summary>
+    /// 漫画信息
+    /// </summary>
+    public IllustProfile IllustProfile { get; set; }
 }
