@@ -1,9 +1,9 @@
 ﻿namespace Scighost.PixivApi.Novel;
 
 /// <summary>
-/// 小说封面图片
+/// 小说图片链接
 /// </summary>
-public class NovelSeriesCoverUrls
+public class NovelImageUrls
 {
     /// <summary>
     /// 128x128

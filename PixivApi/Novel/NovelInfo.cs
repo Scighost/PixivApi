@@ -94,7 +94,7 @@ public class NovelInfo
     public XRestrict XRestrict { get; set; }
 
     /// <summary>
-    /// 正文
+    /// 正文，已知特殊格式有 [newpage]，[chapter:{chapterName}]，[uploadedimage:{imageId}]
     /// </summary>
     [JsonPropertyName("content")]
     public string Content { get; set; }
@@ -172,6 +172,12 @@ public class NovelInfo
     /// </summary>
     [JsonPropertyName("marker")]
     public int? Marker { get; set; }
+
+    /// <summary>
+    /// 嵌入小说正文的图片，格式为 [uploadedimage:{id}]
+    /// </summary>
+    [JsonPropertyName("textEmbeddedImages")]
+    public Dictionary<int, TextEmbeddedImage> TextEmbeddedImages { get; set; }
 
 }
 

@@ -167,21 +167,21 @@ public class NovelSeries
     /// </summary>
     [JsonPropertyName("cover")]
     [JsonConverter(typeof(NovelSeriesCoverJsonConverter))]
-    public NovelSeriesCoverUrls CoverUrls { get; set; }
+    public NovelImageUrls CoverUrls { get; set; }
 
 
 }
 
 
-internal class NovelSeriesCoverJsonConverter : JsonConverter<NovelSeriesCoverUrls>
+internal class NovelSeriesCoverJsonConverter : JsonConverter<NovelImageUrls>
 {
-    public override NovelSeriesCoverUrls? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    public override NovelImageUrls? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
         var wrapper = JsonSerializer.Deserialize<NovelSeriesCoverUrlsWrapper>(ref reader, options);
         return wrapper?.Urls;
     }
 
-    public override void Write(Utf8JsonWriter writer, NovelSeriesCoverUrls value, JsonSerializerOptions options)
+    public override void Write(Utf8JsonWriter writer, NovelImageUrls value, JsonSerializerOptions options)
     {
         writer.WriteRawValue(JsonSerializer.Serialize(new NovelSeriesCoverUrlsWrapper { Urls = value }, options));
     }
@@ -196,6 +196,6 @@ internal class NovelSeriesCoverJsonConverter : JsonConverter<NovelSeriesCoverUrl
         /// 不同尺寸的封面
         /// </summary>
         [JsonPropertyName("urls")]
-        public NovelSeriesCoverUrls Urls { get; set; }
+        public NovelImageUrls Urls { get; set; }
     }
 }
